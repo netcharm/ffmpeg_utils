@@ -148,6 +148,10 @@ namespace FFMpegConvertGUI
             {
                 commonargs.Add( $"-vcodec libx264 -acodec aac -b:a 320k -q:a 1" );
             }
+            else if ( string.Equals( "mkv", dst ) )
+            {
+                commonargs.Add( $"-acodec copy -vcodec copy" );
+            }
             else if ( string.Equals( "wav", dst ) )
             {
                 commonargs.Add( $"-f wav" );
