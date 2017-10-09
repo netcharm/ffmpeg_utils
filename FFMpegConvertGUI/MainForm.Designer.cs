@@ -310,12 +310,13 @@
             // linkFFmpeg
             // 
             this.linkFFmpeg.AutoEllipsis = true;
-            this.linkFFmpeg.Location = new System.Drawing.Point(7, 22);
+            this.linkFFmpeg.Location = new System.Drawing.Point(7, 18);
             this.linkFFmpeg.Name = "linkFFmpeg";
             this.linkFFmpeg.Size = new System.Drawing.Size(70, 35);
             this.linkFFmpeg.TabIndex = 0;
             this.linkFFmpeg.TabStop = true;
-            this.linkFFmpeg.Text = "https://ffmpeg.org";
+            this.linkFFmpeg.Text = "ffmpeg.org";
+            this.linkFFmpeg.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkFFmpeg_LinkClicked);
             // 
             // MainForm
             // 
