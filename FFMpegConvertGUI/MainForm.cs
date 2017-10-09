@@ -380,17 +380,57 @@ namespace FFMpegConvertGUI
             "gif", "webp", "png", "jpg", "jpeg", "tif", "tiff", "bmp"
         };
 
-        internal async Task<int> Run( string cmd, string[] args, string working="" )
+        private static string[] ParseCommandLine( string cmdline )
+        {
+            List<string> args = new List<string>();
+
+            string[] cmds = cmdline.Split( new char[] { ' ' } );
+            string arg = "";
+            foreach ( string cmd in cmds )
+            {
+                if ( cmd.StartsWith( "\"" ) && cmd.EndsWith( "\"" ) )
+                {
+                    args.Add( cmd.Trim( new char[] { '\"', ' ' } ) );
+                    arg = "";
+                }
+                else if ( cmd.StartsWith( "\"" ) )
+                {
+                    arg = cmd + " ";
+                }
+                else if ( cmd.EndsWith( "\"" ) )
+                {
+                    arg += cmd;
+                    args.Add( arg.Trim( new char[] { '\"', ' ' } ) );
+                    arg = "";
+                }
+                else if ( !string.IsNullOrEmpty( arg ) )
+                {
+                    arg += cmd + " ";
+                }
+                else
+                {
+                    if ( !string.IsNullOrEmpty( cmd ) )
+                    {
+                        args.Add( cmd );
+                    }
+                    arg = "";
+                }
+            }
+            return ( args.GetRange( 1, args.Count - 1 ).ToArray() );
+        }
+
+        internal async Task<int> Run( string cmd, string[] args, string working = "" )
         {
             List<string> param = new List<string>();
             param.AddRange( args );
 
-            return (await Run( cmd, string.Join( " ", param ) ) );
+            return ( await Run( cmd, string.Join( " ", param ) ) );
         }
 
-        internal async Task<int> Run( string cmd, string args, string working="" )
+        internal async Task<int> Run( string cmd, string args, string working = "" )
         {
-            if ( !File.Exists( cmd ) ) return ( -100 );
+            int exitCode = -1000;
+            if ( !File.Exists( cmd ) ) return ( exitCode );
 
             Process p = new Process();
 
@@ -414,9 +454,8 @@ namespace FFMpegConvertGUI
             //p.BeginErrorReadLine();
             p.WaitForExit( 5000 );
 
-            bool exited = p.HasExited;
+            //bool exited = p.HasExited;
 
-            int exitCode = 0;
             if ( p.HasExited ) exitCode = p.ExitCode;
             //p.CancelOutputRead();
             //p.CancelErrorRead();
@@ -425,7 +464,7 @@ namespace FFMpegConvertGUI
             return ( exitCode );
         }
 
-        internal async Task<int> PerformConvert(string[] files)
+        internal async Task<int> PerformConvert( string[] files )
         {
             int exit = -1;
             foreach ( Control dst in grpDst.Controls )
@@ -434,9 +473,12 @@ namespace FFMpegConvertGUI
                 {
                     foreach ( string fsrc in files )
                     {
-                        string working = Path.GetDirectoryName(fsrc);
-                        string args = SetParams( dst.Text, fsrc );
-                        exit = await Run( Path.Combine( AppPath, "ffmpeg.exe" ), args, working );
+                        if ( File.Exists( fsrc ) )
+                        {
+                            string working = Path.GetDirectoryName(fsrc);
+                            string args = SetParams( dst.Text, fsrc );
+                            exit = await Run( Path.Combine( AppPath, "ffmpeg.exe" ), args, working );
+                        }
                     }
                     //if ( exit == 0 ) MessageBox.Show( "OK!" );
                     break;
@@ -541,6 +583,17 @@ namespace FFMpegConvertGUI
             btnConvert.Image = Icon.ToBitmap();
 
             btnDstMP4.PerformClick();
+        }
+
+        private async void MainForm_Shown( object sender, EventArgs e )
+        {
+            Refresh();
+
+            string[] args = ParseCommandLine(Environment.CommandLine);
+            if ( args.Length > 0 )
+            {
+                int exit = await PerformConvert( args );
+            }
         }
 
         private void MainForm_DragOver( object sender, DragEventArgs e )

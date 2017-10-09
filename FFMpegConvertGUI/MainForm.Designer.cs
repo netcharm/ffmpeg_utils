@@ -335,6 +335,7 @@
             this.Text = "Media Convert";
             this.TopMost = true;
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Shown += new System.EventHandler(this.MainForm_Shown);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
             this.DragOver += new System.Windows.Forms.DragEventHandler(this.MainForm_DragOver);
             this.grpDst.ResumeLayout(false);
