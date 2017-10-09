@@ -15,12 +15,23 @@ namespace FFMpegConvertGUI
     public partial class MainForm : Form
     {
         private string AppPath = Path.GetDirectoryName(Application.ExecutablePath);
-        private string[] supported = new string[] {
-            "*.aac", "*.amr", "*.mp3", "*.ogg", "*.wma", "*.wav",
-            "*.gif", "*.webp", "*.png", "*.jpg", "*.tif", "*.bmp",
-            "*.flv", "*.mkv", "*.mp4", "*.wmv", "*.webm", "*.h264", "*.avi", "*.divx", "*.xvid" };
 
-        internal async Task<int> Run( string cmd, string[] args, string working = "" )
+        string[] same = { "flv", "mkv", "mp4" };
+        private List<string> supported = new List<string>();
+
+        private string[] audio = new string[] {
+            "aac", "amr", "mp3", "ogg", "wma", "wav", "m4a", "oga"
+        };
+
+        private string[] video = new string[] {
+            "flv", "mkv", "mp4", "wmv", "webm", "h264", "avi", "divx", "xvid", "mjpeg", "m4v", "ogv"
+        };
+
+        private string[] image = new string[] {
+            "gif", "webp", "png", "jpg", "jpeg", "tif", "tiff", "bmp"
+        };
+
+        internal async Task<int> Run( string cmd, string[] args, string working="" )
         {
             List<string> param = new List<string>();
             param.AddRange( args );
@@ -28,91 +39,17 @@ namespace FFMpegConvertGUI
             return (await Run( cmd, string.Join( " ", param ) ) );
         }
 
-        internal string SetParams( string Dst, string ifile )
-        {
-            string result = string.Empty;
-
-            string src = Path.GetExtension(ifile).ToLower().TrimStart(new char[] { '.' });
-            string dst = Dst.ToLower();
-
-            //-hide_banner - i
-            //amr2aac.cmd -acodec libfaac
-            //amr2mp3.cmd -acodec libmp3lame
-            //amr2ogg.cmd -strict 1 -acodec libvorbis
-            //flv2mkv.cmd -acodec copy -vcodec copy
-            //flv2mp4.cmd -acodec copy -vcodec copy
-            //gif2mp4.cmd -vf "scale=trunc(in_w/2)*2:trunc(in_h/2)*2"
-            //gif2webm.cmd -c:v libvpx -crf 12 -b:v 100K
-            //mkv2mp4.cmd -vcodec copy -acodec copy
-            //mp42mkv.cmd -vcodec copy -acodec copy
-            //wmv2mkv.cmd -acodec copy
-            //wmv2mp4.cmd -acodec copy
-            string[] same = { "flv", "mkv", "mp4" };
-            string fi = Path.GetFileName(ifile.Trim(new char[] { '\"' } ));
-            string fo = $"{Path.GetFileNameWithoutExtension(ifile.Trim(new char[] { '\"' } ))}.{dst.ToLower()}";
-
-            if ( string.Equals( "aac", dst ) )
-            {
-                result = $"-hide_banner -y -i \"{fi}\" -acodec libfaac \"{fo}\"";
-            }
-            else if ( string.Equals( "amr", dst ) )
-            {
-                result = $"-hide_banner -y -i \"{fi}\" -acodec libamr_nb -ab 12.2k -ar 8000 -ac 1 \"{fo}\"";
-            }
-            else if ( string.Equals( "mp3", dst ) )
-            {
-                result = $"-hide_banner -y -i \"{fi}\" -acodec libmp3lame \"{fo}\"";
-            }
-            else if ( string.Equals( "ogg", dst ) )
-            {
-                result = $"-hide_banner -y -i \"{fi}\" -strict 1 -acodec libvorbis \"{fo}\"";
-            }
-            else if ( same.Contains( src ) && same.Contains( dst ) )
-            {
-                result = $"-hide_banner -y -i \"{fi}\" -acodec copy -vcodec copy \"{fo}\"";
-            }
-            else if ( string.Equals( "gif", src ) && same.Contains( dst ) )
-            {
-                result = $"-hide_banner -y -i \"{fi}\" -vf \"scale = trunc( in_w / 2 ) * 2:trunc( in_h / 2 ) * 2\" \"{fo}\"";
-            }
-            else if ( string.Equals( "webm", dst ) )
-            {
-                result = $"-hide_banner -y -i \"{fi}\" -c:v libvpx -crf 12 -b:v 100K \"{fo}\"";
-            }
-            else if ( string.Equals( "h264", dst ) )
-            {
-                result = $"-hide_banner -y -i \"{fi}\" -vcodec copy -vbsf h264_mp4toannexb -an \"{fo}\"";
-            }
-            else if ( string.Equals( "mp4", dst ) )
-            {
-                result = $"-hide_banner -y -i \"{fi}\" -vcodec libx264 -acodec aac \"{fo}\"";
-            }
-            else if ( string.Equals( "wav", dst ) )
-            {
-                result = $"-hide_banner -y -i \"{fi}\" -f wav \"{fo}\"";
-            }            
-            else
-            {
-                result = $"-hide_banner -y -i \"{fi}\" \"{fo}\"";
-            }
-
-            //MessageBox.Show( result );
-
-            return ( result );
-        }
-
         internal async Task<int> Run( string cmd, string args, string working="" )
         {
             if ( !File.Exists( cmd ) ) return ( -100 );
 
-            ProcessStartInfo psi = new ProcessStartInfo();
             Process p = new Process();
 
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.CreateNoWindow = false;
             p.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
             p.StartInfo.RedirectStandardOutput = false;
-            //p.StartInfo.RedirectStandardInput = false;
+            p.StartInfo.RedirectStandardInput = false;
             p.StartInfo.RedirectStandardError = false;
             if ( !string.IsNullOrEmpty( working ) )
                 p.StartInfo.WorkingDirectory = working;
@@ -124,12 +61,9 @@ namespace FFMpegConvertGUI
 
             p.Start();
 
-            //Console.ReadLine();
-            //MessageBox.Show( "End" );
-
             //p.BeginOutputReadLine();
             //p.BeginErrorReadLine();
-            p.WaitForExit(5000);
+            p.WaitForExit( 5000 );
 
             bool exited = p.HasExited;
 
@@ -162,6 +96,82 @@ namespace FFMpegConvertGUI
             return ( exit );
         }
 
+        internal string SetParams( string Dst, string ifile )
+        {
+            string result = string.Empty;
+
+            string src = Path.GetExtension(ifile).ToLower().TrimStart(new char[] { '.' });
+            string dst = Dst.ToLower();
+
+            string fi = Path.GetFileName(ifile.Trim(new char[] { '\"' } ));
+            string fo = $"{Path.GetFileNameWithoutExtension(ifile.Trim(new char[] { '\"' } ))}.{dst.ToLower()}";
+
+            List<string> commonargs = new List<string>();
+            commonargs.Add( $"-hide_banner" );
+            commonargs.Add( $"-y" );
+            commonargs.Add( $"-copyts" );
+            commonargs.Add( $"-i \"{fi}\"" );
+
+            if ( string.Equals( "aac", dst ) )
+            {
+                commonargs.Add( $"-acodec aac -b:a 320k -q:a 1" );
+            }
+            else if ( string.Equals( "amr", dst ) )
+            {
+                commonargs.Add( $"-acodec libamr_nb -ab 12.2k -ar 8000 -ac 1" );
+            }
+            else if ( string.Equals( "mp3", dst ) )
+            {
+                commonargs.Add( $"-acodec libmp3lame -b:a 320k -q:a 1" );
+            }
+            else if ( string.Equals( "ogg", dst ) )
+            {
+                commonargs.Add( $"-strict 1 -acodec libvorbis -b:a 320k -q:a 1" );
+            }
+            else if ( same.Contains( src ) && same.Contains( dst ) )
+            {
+                commonargs.Add( $"-acodec copy -vcodec copy" );
+            }
+            else if ( string.Equals( "gif", src ) && same.Contains( dst ) )
+            {
+                commonargs.Add( $"-vf \"scale=trunc(iw/2)*2:trunc(ih/2)*2\"" );
+            }
+            else if ( string.Equals( "webm", dst ) )
+            {
+                commonargs.Add( $"-c:v libvpx -crf 12 -b:v 100K" );
+            }
+            else if ( string.Equals( "h264", dst ) )
+            {
+                commonargs.Add( $"-vcodec copy -vbsf h264_mp4toannexb -an" );
+            }
+            else if ( string.Equals( "mp4", dst ) )
+            {
+                commonargs.Add( $"-vcodec libx264 -acodec aac -b:a 320k -q:a 1" );
+            }
+            else if ( string.Equals( "wav", dst ) )
+            {
+                commonargs.Add( $"-f wav" );
+            }
+            else
+            {
+            }
+
+            if ( audio.Contains( src ) && video.Contains( dst ) )
+            {
+                //commonargs.Add( $"-r 1 -s 1280,720 -aspect 16:9" );
+                commonargs.Add( $"-vn" );
+            }
+            else if ( audio.Contains( dst ) && video.Contains( src ) )
+            {
+                commonargs.Add( $"-an" );
+            }
+
+            commonargs.Add( $"\"{fo}\"" );
+            result = string.Join( " ", commonargs );
+
+            return ( result );
+        }
+
         public MainForm()
         {
             InitializeComponent();
@@ -170,6 +180,10 @@ namespace FFMpegConvertGUI
         private void MainForm_Load( object sender, EventArgs e )
         {
             Icon = Icon.ExtractAssociatedIcon( Application.ExecutablePath );
+
+            supported.AddRange( audio );
+            supported.AddRange( video );
+            supported.AddRange( image );
 
             btnConvert.Image = Icon.ToBitmap();
 
@@ -216,7 +230,17 @@ namespace FFMpegConvertGUI
         private async void btnConvert_Click( object sender, EventArgs e )
         {
             btnConvert.Enabled = false;
-            dlgOpen.Filter = $@"All supported File(s)|{string.Join(";", supported)}|All File(s)|*.*";
+            List<string> fl = new List<string>();
+            fl.Add( $"All supported File( s )" );
+            fl.Add( $"*.{string.Join( ";*.", supported )}" );
+            fl.Add( $"All File(s)|*.*" );
+            foreach ( string ft in supported )
+            {
+                fl.Add( $"{ft.ToUpper()} File(s)|*.{ft}" );
+            }
+            dlgOpen.Filter = string.Join( "|", fl );
+
+            //dlgOpen.Filter = $@"All supported File(s)|*.{string.Join(";*.", supported)}|All File(s)|*.*";
             //dlgOpen.FileName = string.Join( ";", supported );
             dlgOpen.FileName = string.Empty;
             if ( dlgOpen.ShowDialog() == DialogResult.OK )

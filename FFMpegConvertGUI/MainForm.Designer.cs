@@ -29,12 +29,18 @@
         private void InitializeComponent()
         {
             this.grpDst = new System.Windows.Forms.GroupBox();
+            this.btnDstWAV = new System.Windows.Forms.RadioButton();
             this.btnDstWebP = new System.Windows.Forms.RadioButton();
+            this.btnDstH264 = new System.Windows.Forms.RadioButton();
             this.btnDstWebM = new System.Windows.Forms.RadioButton();
             this.btnDstWMV = new System.Windows.Forms.RadioButton();
             this.btnDstMP4 = new System.Windows.Forms.RadioButton();
             this.btnDstMKV = new System.Windows.Forms.RadioButton();
             this.btnDstFLV = new System.Windows.Forms.RadioButton();
+            this.btnDstTIF = new System.Windows.Forms.RadioButton();
+            this.btnDstJPG = new System.Windows.Forms.RadioButton();
+            this.btnDstPNG = new System.Windows.Forms.RadioButton();
+            this.btnDstBMP = new System.Windows.Forms.RadioButton();
             this.btnDstGIF = new System.Windows.Forms.RadioButton();
             this.btnDstAAC = new System.Windows.Forms.RadioButton();
             this.btnDstWMA = new System.Windows.Forms.RadioButton();
@@ -43,13 +49,10 @@
             this.btnDstAMR = new System.Windows.Forms.RadioButton();
             this.btnConvert = new System.Windows.Forms.Button();
             this.dlgOpen = new System.Windows.Forms.OpenFileDialog();
-            this.btnDstWAV = new System.Windows.Forms.RadioButton();
-            this.btnDstH264 = new System.Windows.Forms.RadioButton();
-            this.btnDstBMP = new System.Windows.Forms.RadioButton();
-            this.btnDstPNG = new System.Windows.Forms.RadioButton();
-            this.btnDstJPG = new System.Windows.Forms.RadioButton();
-            this.btnDstTIF = new System.Windows.Forms.RadioButton();
+            this.grpPowered = new System.Windows.Forms.GroupBox();
+            this.linkFFmpeg = new System.Windows.Forms.LinkLabel();
             this.grpDst.SuspendLayout();
+            this.grpPowered.SuspendLayout();
             this.SuspendLayout();
             // 
             // grpDst
@@ -80,6 +83,17 @@
             this.grpDst.TabStop = false;
             this.grpDst.Text = "Target";
             // 
+            // btnDstWAV
+            // 
+            this.btnDstWAV.AutoSize = true;
+            this.btnDstWAV.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDstWAV.Location = new System.Drawing.Point(18, 130);
+            this.btnDstWAV.Name = "btnDstWAV";
+            this.btnDstWAV.Size = new System.Drawing.Size(40, 16);
+            this.btnDstWAV.TabIndex = 20;
+            this.btnDstWAV.Text = "WAV";
+            this.btnDstWAV.UseVisualStyleBackColor = true;
+            // 
             // btnDstWebP
             // 
             this.btnDstWebP.AutoSize = true;
@@ -90,6 +104,17 @@
             this.btnDstWebP.TabIndex = 19;
             this.btnDstWebP.Text = "WebP";
             this.btnDstWebP.UseVisualStyleBackColor = true;
+            // 
+            // btnDstH264
+            // 
+            this.btnDstH264.AutoSize = true;
+            this.btnDstH264.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDstH264.Location = new System.Drawing.Point(152, 108);
+            this.btnDstH264.Name = "btnDstH264";
+            this.btnDstH264.Size = new System.Drawing.Size(46, 16);
+            this.btnDstH264.TabIndex = 18;
+            this.btnDstH264.Text = "H264";
+            this.btnDstH264.UseVisualStyleBackColor = true;
             // 
             // btnDstWebM
             // 
@@ -145,6 +170,50 @@
             this.btnDstFLV.TabIndex = 14;
             this.btnDstFLV.Text = "FLV";
             this.btnDstFLV.UseVisualStyleBackColor = true;
+            // 
+            // btnDstTIF
+            // 
+            this.btnDstTIF.AutoSize = true;
+            this.btnDstTIF.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDstTIF.Location = new System.Drawing.Point(85, 108);
+            this.btnDstTIF.Name = "btnDstTIF";
+            this.btnDstTIF.Size = new System.Drawing.Size(40, 16);
+            this.btnDstTIF.TabIndex = 13;
+            this.btnDstTIF.Text = "TIF";
+            this.btnDstTIF.UseVisualStyleBackColor = true;
+            // 
+            // btnDstJPG
+            // 
+            this.btnDstJPG.AutoSize = true;
+            this.btnDstJPG.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDstJPG.Location = new System.Drawing.Point(85, 64);
+            this.btnDstJPG.Name = "btnDstJPG";
+            this.btnDstJPG.Size = new System.Drawing.Size(40, 16);
+            this.btnDstJPG.TabIndex = 13;
+            this.btnDstJPG.Text = "JPG";
+            this.btnDstJPG.UseVisualStyleBackColor = true;
+            // 
+            // btnDstPNG
+            // 
+            this.btnDstPNG.AutoSize = true;
+            this.btnDstPNG.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDstPNG.Location = new System.Drawing.Point(85, 42);
+            this.btnDstPNG.Name = "btnDstPNG";
+            this.btnDstPNG.Size = new System.Drawing.Size(40, 16);
+            this.btnDstPNG.TabIndex = 13;
+            this.btnDstPNG.Text = "PNG";
+            this.btnDstPNG.UseVisualStyleBackColor = true;
+            // 
+            // btnDstBMP
+            // 
+            this.btnDstBMP.AutoSize = true;
+            this.btnDstBMP.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDstBMP.Location = new System.Drawing.Point(85, 86);
+            this.btnDstBMP.Name = "btnDstBMP";
+            this.btnDstBMP.Size = new System.Drawing.Size(40, 16);
+            this.btnDstBMP.TabIndex = 13;
+            this.btnDstBMP.Text = "BMP";
+            this.btnDstBMP.UseVisualStyleBackColor = true;
             // 
             // btnDstGIF
             // 
@@ -228,71 +297,25 @@
             // 
             this.dlgOpen.Multiselect = true;
             // 
-            // btnDstWAV
+            // grpPowered
             // 
-            this.btnDstWAV.AutoSize = true;
-            this.btnDstWAV.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDstWAV.Location = new System.Drawing.Point(18, 130);
-            this.btnDstWAV.Name = "btnDstWAV";
-            this.btnDstWAV.Size = new System.Drawing.Size(40, 16);
-            this.btnDstWAV.TabIndex = 20;
-            this.btnDstWAV.Text = "WAV";
-            this.btnDstWAV.UseVisualStyleBackColor = true;
+            this.grpPowered.Controls.Add(this.linkFFmpeg);
+            this.grpPowered.Location = new System.Drawing.Point(12, 102);
+            this.grpPowered.Name = "grpPowered";
+            this.grpPowered.Size = new System.Drawing.Size(83, 69);
+            this.grpPowered.TabIndex = 3;
+            this.grpPowered.TabStop = false;
+            this.grpPowered.Text = "Powered By";
             // 
-            // btnDstH264
+            // linkFFmpeg
             // 
-            this.btnDstH264.AutoSize = true;
-            this.btnDstH264.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDstH264.Location = new System.Drawing.Point(152, 108);
-            this.btnDstH264.Name = "btnDstH264";
-            this.btnDstH264.Size = new System.Drawing.Size(46, 16);
-            this.btnDstH264.TabIndex = 18;
-            this.btnDstH264.Text = "H264";
-            this.btnDstH264.UseVisualStyleBackColor = true;
-            // 
-            // btnDstBMP
-            // 
-            this.btnDstBMP.AutoSize = true;
-            this.btnDstBMP.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDstBMP.Location = new System.Drawing.Point(85, 86);
-            this.btnDstBMP.Name = "btnDstBMP";
-            this.btnDstBMP.Size = new System.Drawing.Size(40, 16);
-            this.btnDstBMP.TabIndex = 13;
-            this.btnDstBMP.Text = "BMP";
-            this.btnDstBMP.UseVisualStyleBackColor = true;
-            // 
-            // btnDstPNG
-            // 
-            this.btnDstPNG.AutoSize = true;
-            this.btnDstPNG.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDstPNG.Location = new System.Drawing.Point(85, 42);
-            this.btnDstPNG.Name = "btnDstPNG";
-            this.btnDstPNG.Size = new System.Drawing.Size(40, 16);
-            this.btnDstPNG.TabIndex = 13;
-            this.btnDstPNG.Text = "PNG";
-            this.btnDstPNG.UseVisualStyleBackColor = true;
-            // 
-            // btnDstJPG
-            // 
-            this.btnDstJPG.AutoSize = true;
-            this.btnDstJPG.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDstJPG.Location = new System.Drawing.Point(85, 64);
-            this.btnDstJPG.Name = "btnDstJPG";
-            this.btnDstJPG.Size = new System.Drawing.Size(40, 16);
-            this.btnDstJPG.TabIndex = 13;
-            this.btnDstJPG.Text = "JPG";
-            this.btnDstJPG.UseVisualStyleBackColor = true;
-            // 
-            // btnDstTIF
-            // 
-            this.btnDstTIF.AutoSize = true;
-            this.btnDstTIF.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDstTIF.Location = new System.Drawing.Point(85, 108);
-            this.btnDstTIF.Name = "btnDstTIF";
-            this.btnDstTIF.Size = new System.Drawing.Size(40, 16);
-            this.btnDstTIF.TabIndex = 13;
-            this.btnDstTIF.Text = "TIF";
-            this.btnDstTIF.UseVisualStyleBackColor = true;
+            this.linkFFmpeg.AutoEllipsis = true;
+            this.linkFFmpeg.Location = new System.Drawing.Point(7, 22);
+            this.linkFFmpeg.Name = "linkFFmpeg";
+            this.linkFFmpeg.Size = new System.Drawing.Size(70, 35);
+            this.linkFFmpeg.TabIndex = 0;
+            this.linkFFmpeg.TabStop = true;
+            this.linkFFmpeg.Text = "https://ffmpeg.org";
             // 
             // MainForm
             // 
@@ -301,6 +324,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(334, 183);
+            this.Controls.Add(this.grpPowered);
             this.Controls.Add(this.btnConvert);
             this.Controls.Add(this.grpDst);
             this.DoubleBuffered = true;
@@ -314,6 +338,7 @@
             this.DragOver += new System.Windows.Forms.DragEventHandler(this.MainForm_DragOver);
             this.grpDst.ResumeLayout(false);
             this.grpDst.PerformLayout();
+            this.grpPowered.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -340,6 +365,8 @@
         private System.Windows.Forms.RadioButton btnDstJPG;
         private System.Windows.Forms.RadioButton btnDstPNG;
         private System.Windows.Forms.RadioButton btnDstBMP;
+        private System.Windows.Forms.GroupBox grpPowered;
+        private System.Windows.Forms.LinkLabel linkFFmpeg;
     }
 }
 
