@@ -7,12 +7,19 @@ simple setting parameters and shell call ffmpeg binary to convert input source
 ### Features
 
 1. drag/frop multifiles to UI
-2. click convert button to open dialog to pick multifiles
-3. pass multifiles from command line
+1. click convert button to open dialog to pick multifiles
+1. pass multifiles from command line
 
 ### Snapshot
 
 ![Mainform](https://gitee.com/netcharm/ffmpeg_utils/raw/master/FFMpegConvertGUI/snapshots/mainform.png)
+
+### Note
+
+You need download ffmpeg windows binary from 
+
+1. [ffmpeg official site](https://ffmpeg.org)
+1. [Zeraone](https://ffmpeg.zeranoe.com/builds/)
 
 ### License
 
