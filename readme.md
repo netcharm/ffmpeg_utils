@@ -12,7 +12,7 @@ simple setting parameters and shell call ffmpeg binary to convert input source
 
 ### Snapshot
 
-[Mainform](/netcharm/ffmpeg_utils/raw/master/FFMpegConvertGUI/snapshots/mainform.png)
+[Mainform](https://gitee.com/netcharm/ffmpeg_utils/raw/master/FFMpegConvertGUI/snapshots/mainform.png)
 
 ### License
 
