@@ -16,10 +16,12 @@ simple setting parameters and shell call ffmpeg binary to convert input source
 
 ### Note
 
-You need download ffmpeg windows binary from 
+before using these utils, you need download ffmpeg windows binary from following site
 
 1. [ffmpeg official site](https://ffmpeg.org)
-1. [Zeraone](https://ffmpeg.zeranoe.com/builds/)
+1. [Zeraone site](https://ffmpeg.zeranoe.com/builds/)
+
+and put these utils to ffmpeg binarg folder.
 
 ### License
 

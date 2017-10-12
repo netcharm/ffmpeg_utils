@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
@@ -16,7 +17,14 @@ namespace FFMpegConvertGUI
     {
         private string AppPath = Path.GetDirectoryName(Application.ExecutablePath);
 
+        private static Configuration config = ConfigurationManager.OpenExeConfiguration( Application.ExecutablePath );
+        private AppSettingsSection appSection = config.AppSettings;
+
         string[] same = { "flv", "mkv", "mp4" };
+        string[] image2audio = { "ogg", "wma" };
+        string[] image2video = { "mkv" };
+        string[] video2image = { "webp", "gif" };
+
         private List<string> supported = new List<string>();
         #region FFmpeg formats
         private Dictionary<string, string> formats = new Dictionary<string, string>()
@@ -368,17 +376,49 @@ namespace FFMpegConvertGUI
         };
         #endregion
 
+        #region file catalog
         private string[] audio = new string[] {
             "aac", "amr", "mp3", "ogg", "wma", "wav", "m4a", "oga"
         };
 
         private string[] video = new string[] {
-            "flv", "mkv", "mp4", "wmv", "webm", "h264", "avi", "divx", "xvid", "mjpeg", "m4v", "ogv"
+            "flv", "mkv", "mp4", "wmv", "webm", "h264", "avi", "divx", "xvid", "mjpeg", "m4v", "ogv", "ogg"
         };
 
         private string[] image = new string[] {
             "gif", "webp", "png", "jpg", "jpeg", "tif", "tiff", "bmp"
         };
+        #endregion
+
+        #region Defalut Convert Params for Target
+        private Dictionary<string, string> TargetParams = new Dictionary<string, string>()
+        {
+            // audio
+            { "aac", "-acodec aac -b:a 320k -q:a 1 -write_id3v2 true -write_apetag true" },
+            { "amr", "-acodec libamr_nb -ab 12.2k -ar 8000 -ac 1" },
+            { "mp3", "-acodec libmp3lame -b:a 320k -q:a 1" },
+            //{ "ogg", "-strict 1 -acodec libvorbis -b:a 320k -q:a 6" },
+            { "ogg", "-strict 1 -acodec libvorbis -b:a 320k -q:a 6" },
+            { "wav", "-f wav" },
+            { "wma", "" },
+            // video
+            { "flv" , "" },
+            { "h264", "-vcodec libx264 -vbsf h264_mp4toannexb -an" },
+            { "mp4" , "-vcodec libx264 -acodec aac -b:a 320k -q:a 1" },
+            { "mkv" , "-acodec copy -vcodec copy" },
+            { "webm", "-c:v libvpx-vp9 -crf 12 -b:v 100K" },
+            { "wmv" , "" },
+            // image
+            { "bmp" , "" },
+            { "gif" , "-vf \"scale=trunc(iw/2)*2:trunc(ih/2)*2\"" },
+            { "jpg" , "" },
+            { "png" , "" },
+            { "tif" , "" },
+            { "webp", "-c libwebp" },
+            // unknown
+            {"unk", "" }
+        };
+        #endregion
 
         private static string[] ParseCommandLine( string cmdline )
         {
@@ -477,6 +517,7 @@ namespace FFMpegConvertGUI
                         {
                             string working = Path.GetDirectoryName(fsrc);
                             string args = SetParams( dst.Text, fsrc );
+                            if ( string.IsNullOrEmpty( args ) ) continue;
                             exit = await Run( Path.Combine( AppPath, "ffmpeg.exe" ), args, working );
                         }
                     }
@@ -503,68 +544,87 @@ namespace FFMpegConvertGUI
             commonargs.Add( $"-copyts" );
             commonargs.Add( $"-i \"{fi}\"" );
 
-            if ( string.Equals( "aac", dst ) )
-            {
-                commonargs.Add( $"-acodec aac -b:a 320k -q:a 1" );
-            }
-            else if ( string.Equals( "amr", dst ) )
-            {
-                commonargs.Add( $"-acodec libamr_nb -ab 12.2k -ar 8000 -ac 1" );
-            }
-            else if ( string.Equals( "mp3", dst ) )
-            {
-                commonargs.Add( $"-acodec libmp3lame -b:a 320k -q:a 1" );
-            }
-            else if ( string.Equals( "ogg", dst ) )
-            {
-                commonargs.Add( $"-strict 1 -acodec libvorbis -b:a 320k -q:a 1" );
-            }
-            else if ( same.Contains( src ) && same.Contains( dst ) )
+            if ( same.Contains( src ) && same.Contains( dst ) )
             {
                 commonargs.Add( $"-acodec copy -vcodec copy" );
             }
-            else if ( string.Equals( "gif", src ) && same.Contains( dst ) )
+            else if ( image.Contains( src ) && image2video.Contains( dst ) )
             {
-                commonargs.Add( $"-vf \"scale=trunc(iw/2)*2:trunc(ih/2)*2\"" );
+                commonargs.Add( TargetParams["h264"] );
+                commonargs.Add( TargetParams["gif"] );
             }
-            else if ( string.Equals( "webm", dst ) )
+            else if ( image.Contains( src ) && video.Contains( dst ) )
             {
-                commonargs.Add( $"-c:v libvpx -crf 12 -b:v 100K" );
+                commonargs.Add( TargetParams[dst] );
+                commonargs.Add( TargetParams["gif"] );
             }
-            else if ( string.Equals( "h264", dst ) )
+            else if ( image.Contains( src ) && image2audio.Contains( dst ) )
             {
-                commonargs.Add( $"-vcodec copy -vbsf h264_mp4toannexb -an" );
+                commonargs.Add( TargetParams[dst] );
+                commonargs.Add( TargetParams["gif"] );
             }
-            else if ( string.Equals( "mp4", dst ) )
+            else if ( image.Contains( src ) && !image2audio.Contains( dst ) )
             {
-                commonargs.Add( $"-vcodec libx264 -acodec aac -b:a 320k -q:a 1" );
+                return ( string.Empty );
             }
-            else if ( string.Equals( "mkv", dst ) )
+            else if ( TargetParams.ContainsKey( dst ) )
             {
-                commonargs.Add( $"-acodec copy -vcodec copy" );
-            }
-            else if ( string.Equals( "wav", dst ) )
-            {
-                commonargs.Add( $"-f wav" );
+                commonargs.Add( TargetParams[dst] );
             }
             else
             {
             }
 
-            if ( audio.Contains( src ) && video.Contains( dst ) )
+            //if ( audio.Contains( src ) && video.Contains( dst ) )
+            //{
+            //    //commonargs.Add( $"-r 1 -s 1280,720 -aspect 16:9" );
+            //    commonargs.Add( $"-vn" );
+            //}
+            if ( audio.Contains( src ) || audio.Contains( dst ) && !video.Contains( dst ) )
             {
-                //commonargs.Add( $"-r 1 -s 1280,720 -aspect 16:9" );
                 commonargs.Add( $"-vn" );
             }
-            else if ( audio.Contains( dst ) && video.Contains( src ) )
+            else if ( image.Contains( src ) && video.Contains( dst ) )
             {
                 commonargs.Add( $"-an" );
             }
+
 
             commonargs.Add( $"\"{fo}\"" );
             result = string.Join( " ", commonargs );
 
             return ( result );
+        }
+
+        internal void loadSetting()
+        {
+            foreach ( string k in TargetParams.Keys.ToArray() )
+            {
+                try
+                {
+                    TargetParams[k] = appSection.Settings[k].Value;
+                }
+                catch
+                {
+                    //appSection.Settings.Add( k, TargetParams[k] );
+                }
+            }
+        }
+
+        internal void saveSetting()
+        {
+            foreach ( string k in TargetParams.Keys )
+            {
+                try
+                {
+                    appSection.Settings[k].Value = TargetParams[k];
+                }
+                catch
+                {
+                    appSection.Settings.Add( k, TargetParams[k] );
+                }
+            }
+            config.Save();
         }
 
         public MainForm()
@@ -583,6 +643,10 @@ namespace FFMpegConvertGUI
             btnConvert.Image = Icon.ToBitmap();
 
             btnDstMP4.PerformClick();
+
+            //MessageBox.Show( $"{ string.Join("\n\r", TargetParams.Values)}" );
+
+            loadSetting();
         }
 
         private async void MainForm_Shown( object sender, EventArgs e )
@@ -664,6 +728,38 @@ namespace FFMpegConvertGUI
         private void linkFFmpeg_LinkClicked( object sender, LinkLabelLinkClickedEventArgs e )
         {
             Process.Start( "https://ffmpeg.org" );
+        }
+
+        private void tsmiSetParams_Click( object sender, EventArgs e )
+        {
+            using ( FFmpegConvertGUI.ParamsForm fm = new FFmpegConvertGUI.ParamsForm() )
+            {
+                fm.Icon = Icon;
+                foreach ( Control dst in grpDst.Controls )
+                {
+                    if ( ( dst as RadioButton ).Checked )
+                    {
+                        fm.Text = $"Target {dst.Text} {fm.Text}";
+                        var k = dst.Text.ToLower();
+                        fm.SetParams( TargetParams[k] );
+                        if ( fm.ShowDialog() == DialogResult.OK )
+                        {
+                            TargetParams[k] = fm.GetParams();
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void tsmiSaveParams_Click( object sender, EventArgs e )
+        {
+            saveSetting();
+        }
+
+        private void tsmiExit_Click( object sender, EventArgs e )
+        {
+            Close();
         }
     }
 }

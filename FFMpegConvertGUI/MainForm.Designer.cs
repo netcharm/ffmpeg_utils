@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.grpDst = new System.Windows.Forms.GroupBox();
             this.btnDstWAV = new System.Windows.Forms.RadioButton();
             this.btnDstWebP = new System.Windows.Forms.RadioButton();
@@ -51,8 +52,14 @@
             this.dlgOpen = new System.Windows.Forms.OpenFileDialog();
             this.grpPowered = new System.Windows.Forms.GroupBox();
             this.linkFFmpeg = new System.Windows.Forms.LinkLabel();
+            this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.tsmiExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSaveParams = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSep0 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiSetParams = new System.Windows.Forms.ToolStripMenuItem();
             this.grpDst.SuspendLayout();
             this.grpPowered.SuspendLayout();
+            this.contextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // grpDst
@@ -318,6 +325,42 @@
             this.linkFFmpeg.Text = "ffmpeg.org";
             this.linkFFmpeg.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkFFmpeg_LinkClicked);
             // 
+            // contextMenu
+            // 
+            this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiSetParams,
+            this.tsmiSaveParams,
+            this.tsmiSep0,
+            this.tsmiExit});
+            this.contextMenu.Name = "contextMenu";
+            this.contextMenu.Size = new System.Drawing.Size(185, 98);
+            // 
+            // tsmiExit
+            // 
+            this.tsmiExit.Name = "tsmiExit";
+            this.tsmiExit.Size = new System.Drawing.Size(184, 22);
+            this.tsmiExit.Text = "Exit";
+            this.tsmiExit.Click += new System.EventHandler(this.tsmiExit_Click);
+            // 
+            // tsmiSaveParams
+            // 
+            this.tsmiSaveParams.Name = "tsmiSaveParams";
+            this.tsmiSaveParams.Size = new System.Drawing.Size(184, 22);
+            this.tsmiSaveParams.Text = "Save Convert Params";
+            this.tsmiSaveParams.Click += new System.EventHandler(this.tsmiSaveParams_Click);
+            // 
+            // tsmiSep0
+            // 
+            this.tsmiSep0.Name = "tsmiSep0";
+            this.tsmiSep0.Size = new System.Drawing.Size(181, 6);
+            // 
+            // tsmiSetParams
+            // 
+            this.tsmiSetParams.Name = "tsmiSetParams";
+            this.tsmiSetParams.Size = new System.Drawing.Size(184, 22);
+            this.tsmiSetParams.Text = "Set Convert Params";
+            this.tsmiSetParams.Click += new System.EventHandler(this.tsmiSetParams_Click);
+            // 
             // MainForm
             // 
             this.AcceptButton = this.btnConvert;
@@ -325,6 +368,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(334, 183);
+            this.ContextMenuStrip = this.contextMenu;
             this.Controls.Add(this.grpPowered);
             this.Controls.Add(this.btnConvert);
             this.Controls.Add(this.grpDst);
@@ -341,6 +385,7 @@
             this.grpDst.ResumeLayout(false);
             this.grpDst.PerformLayout();
             this.grpPowered.ResumeLayout(false);
+            this.contextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -369,6 +414,11 @@
         private System.Windows.Forms.RadioButton btnDstBMP;
         private System.Windows.Forms.GroupBox grpPowered;
         private System.Windows.Forms.LinkLabel linkFFmpeg;
+        private System.Windows.Forms.ContextMenuStrip contextMenu;
+        private System.Windows.Forms.ToolStripMenuItem tsmiSetParams;
+        private System.Windows.Forms.ToolStripMenuItem tsmiSaveParams;
+        private System.Windows.Forms.ToolStripSeparator tsmiSep0;
+        private System.Windows.Forms.ToolStripMenuItem tsmiExit;
     }
 }
 
