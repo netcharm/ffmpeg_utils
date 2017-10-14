@@ -459,6 +459,20 @@ namespace FFMpegConvertGUI
             return ( args.GetRange( 1, args.Count - 1 ).ToArray() );
         }
 
+        internal void alert( string text )
+        {
+            StringBuilder sb = new StringBuilder();
+            int index = 0;
+            while ( index < text.Length )
+            {
+                int tail = text.Length-index;
+                sb.AppendLine( text.Substring( index, tail > 80 ? 80 : tail ) );
+                index += 80;
+                if ( index > 512 ) break;
+            }
+            MessageBox.Show( this, sb.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning );
+        }
+
         internal async Task<int> Run( string cmd, string[] args, string working = "" )
         {
             List<string> param = new List<string>();
@@ -565,6 +579,7 @@ namespace FFMpegConvertGUI
             }
             else if ( image.Contains( src ) && !image2audio.Contains( dst ) )
             {
+                alert( $"Can't convert from [{src}] to [{dst}]." );
                 return ( string.Empty );
             }
             else if ( TargetParams.ContainsKey( dst ) )
