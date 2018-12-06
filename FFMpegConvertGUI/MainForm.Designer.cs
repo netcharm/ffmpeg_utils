@@ -30,6 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             this.grpDst = new System.Windows.Forms.GroupBox();
+            this.btnDstHEIC = new System.Windows.Forms.RadioButton();
+            this.btnDstHEVC = new System.Windows.Forms.RadioButton();
             this.btnDstH265 = new System.Windows.Forms.RadioButton();
             this.btnDstWAV = new System.Windows.Forms.RadioButton();
             this.btnDstWebP = new System.Windows.Forms.RadioButton();
@@ -67,6 +69,8 @@
             // 
             // grpDst
             // 
+            this.grpDst.Controls.Add(this.btnDstHEIC);
+            this.grpDst.Controls.Add(this.btnDstHEVC);
             this.grpDst.Controls.Add(this.btnDstH265);
             this.grpDst.Controls.Add(this.btnDstWAV);
             this.grpDst.Controls.Add(this.btnDstWebP);
@@ -93,6 +97,28 @@
             this.grpDst.TabIndex = 1;
             this.grpDst.TabStop = false;
             this.grpDst.Text = "Target";
+            // 
+            // btnDstHEIC
+            // 
+            this.btnDstHEIC.AutoSize = true;
+            this.btnDstHEIC.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDstHEIC.Location = new System.Drawing.Point(18, 152);
+            this.btnDstHEIC.Name = "btnDstHEIC";
+            this.btnDstHEIC.Size = new System.Drawing.Size(46, 16);
+            this.btnDstHEIC.TabIndex = 23;
+            this.btnDstHEIC.Text = "HEIC";
+            this.btnDstHEIC.UseVisualStyleBackColor = true;
+            // 
+            // btnDstHEVC
+            // 
+            this.btnDstHEVC.AutoSize = true;
+            this.btnDstHEVC.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDstHEVC.Location = new System.Drawing.Point(85, 152);
+            this.btnDstHEVC.Name = "btnDstHEVC";
+            this.btnDstHEVC.Size = new System.Drawing.Size(46, 16);
+            this.btnDstHEVC.TabIndex = 22;
+            this.btnDstHEVC.Text = "HEVC";
+            this.btnDstHEVC.UseVisualStyleBackColor = true;
             // 
             // btnDstH265
             // 
@@ -324,7 +350,7 @@
             this.grpPowered.Controls.Add(this.linkFFmpeg);
             this.grpPowered.Location = new System.Drawing.Point(12, 102);
             this.grpPowered.Name = "grpPowered";
-            this.grpPowered.Size = new System.Drawing.Size(95, 68);
+            this.grpPowered.Size = new System.Drawing.Size(95, 57);
             this.grpPowered.TabIndex = 3;
             this.grpPowered.TabStop = false;
             this.grpPowered.Text = "Powered By";
@@ -389,11 +415,11 @@
             // 
             // chkForce
             // 
-            this.chkForce.Location = new System.Drawing.Point(12, 176);
+            this.chkForce.Location = new System.Drawing.Point(12, 165);
             this.chkForce.Name = "chkForce";
-            this.chkForce.Size = new System.Drawing.Size(95, 24);
+            this.chkForce.Size = new System.Drawing.Size(95, 35);
             this.chkForce.TabIndex = 23;
-            this.chkForce.Text = "Force";
+            this.chkForce.Text = "Force Re-Encode";
             this.chkForce.UseVisualStyleBackColor = true;
             // 
             // MainForm
@@ -459,6 +485,8 @@
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.RadioButton btnDstH265;
         private System.Windows.Forms.CheckBox chkForce;
+        private System.Windows.Forms.RadioButton btnDstHEIC;
+        private System.Windows.Forms.RadioButton btnDstHEVC;
     }
 }
 

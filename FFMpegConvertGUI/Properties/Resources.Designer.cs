@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FFmpegConvertGUI.Properties {
+namespace FFMpegConvertGUI.Properties {
     using System;
     
     

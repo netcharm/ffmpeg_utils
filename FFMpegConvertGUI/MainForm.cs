@@ -382,11 +382,11 @@ namespace FFMpegConvertGUI
         };
 
         private string[] video = new string[] {
-            "flv", "mkv", "mp4", "wmv", "webm", "h264", "avi", "divx", "xvid", "mjpeg", "m4v", "ogv", "ogg"
+            "flv", "mkv", "mp4", "wmv", "webm", "h264", "avi", "divx", "xvid", "mjpeg", "m4v", "ogv", "ogg", "hevc", "h265"
         };
 
         private string[] image = new string[] {
-            "gif", "webp", "png", "jpg", "jpeg", "tif", "tiff", "bmp"
+            "gif", "webp", "png", "jpg", "jpeg", "tif", "tiff", "bmp", "heif", "heic", "heifs", "heics",
         };
         #endregion
 
@@ -403,10 +403,10 @@ namespace FFMpegConvertGUI
             { "wma", "" },
             // video
             { "flv" , "" },
-            { "h264", "-vcodec h264_nvenc -preset slow -vbsf h264_mp4toannexb -an" },
-            { "mp4" , "-vcodec h264_nvenc -preset slow -level 4.1 -qmin 10 -qmax 52 -acodec aac -b:a 320k -q:a 1 " },
-            { "h265" , "-vcodec hevc_nvenc -preset slow -level 4.1 -qmin 10 -qmax 52 -acodec aac -b:a 320k -q:a 1 " },
-            { "hevc" , "-vcodec hevc_nvenc -preset slow -level 4.1 -qmin 10 -qmax 52 -acodec aac -b:a 320k -q:a 1 " },
+            { "h264", "-vcodec libx264 -preset slow -vbsf h264_mp4toannexb -an" },
+            { "mp4" , "-vcodec libx264 -preset slow -level 4.1 -qmin 10 -qmax 52 -acodec aac -b:a 320k -q:a 1 " },
+            { "h265" , "-vcodec libx265 -preset slow -level 4.1 -qmin 10 -qmax 52 -acodec aac -b:a 320k -q:a 1 " },
+            { "hevc" , "-vcodec libx265 -preset slow -level 4.1 -qmin 10 -qmax 52 -acodec aac -b:a 320k -q:a 1 " },
             { "mkv" , "-acodec copy -vcodec copy" },
             { "webm", "-c:v libvpx-vp9 -crf 12 -b:v 100K" },
             { "wmv" , "" },
@@ -417,76 +417,77 @@ namespace FFMpegConvertGUI
             { "png" , "" },
             { "tif" , "" },
             { "webp", "-c libwebp" },
+            { "heic", "-q 0.9 -preset slower -pix_fmt gbrp -f hevc" },
             // unknown
             {"unk", "" }
         };
         #endregion
 
-        private static string[] ParseCommandLine( string cmdline )
+        private static string[] ParseCommandLine(string cmdline)
         {
             List<string> args = new List<string>();
 
             string[] cmds = cmdline.Split( new char[] { ' ' } );
             string arg = "";
-            foreach ( string cmd in cmds )
+            foreach (string cmd in cmds)
             {
-                if ( cmd.StartsWith( "\"" ) && cmd.EndsWith( "\"" ) )
+                if (cmd.StartsWith("\"") && cmd.EndsWith("\""))
                 {
-                    args.Add( cmd.Trim( new char[] { '\"', ' ' } ) );
+                    args.Add(cmd.Trim(new char[] { '\"', ' ' }));
                     arg = "";
                 }
-                else if ( cmd.StartsWith( "\"" ) )
+                else if (cmd.StartsWith("\""))
                 {
                     arg = cmd + " ";
                 }
-                else if ( cmd.EndsWith( "\"" ) )
+                else if (cmd.EndsWith("\""))
                 {
                     arg += cmd;
-                    args.Add( arg.Trim( new char[] { '\"', ' ' } ) );
+                    args.Add(arg.Trim(new char[] { '\"', ' ' }));
                     arg = "";
                 }
-                else if ( !string.IsNullOrEmpty( arg ) )
+                else if (!string.IsNullOrEmpty(arg))
                 {
                     arg += cmd + " ";
                 }
                 else
                 {
-                    if ( !string.IsNullOrEmpty( cmd ) )
+                    if (!string.IsNullOrEmpty(cmd))
                     {
-                        args.Add( cmd );
+                        args.Add(cmd);
                     }
                     arg = "";
                 }
             }
-            return ( args.GetRange( 1, args.Count - 1 ).ToArray() );
+            return (args.GetRange(1, args.Count - 1).ToArray());
         }
 
-        internal void alert( string text )
+        internal void alert(string text)
         {
             StringBuilder sb = new StringBuilder();
             int index = 0;
-            while ( index < text.Length )
+            while (index < text.Length)
             {
                 int tail = text.Length-index;
-                sb.AppendLine( text.Substring( index, tail > 80 ? 80 : tail ) );
+                sb.AppendLine(text.Substring(index, tail > 80 ? 80 : tail));
                 index += 80;
-                if ( index > 512 ) break;
+                if (index > 512) break;
             }
-            MessageBox.Show( this, sb.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning );
+            MessageBox.Show(this, sb.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
-        internal async Task<int> Run( string cmd, string[] args, string working = "" )
+        internal async Task<int> Run(string cmd, string[] args, string working = "")
         {
             List<string> param = new List<string>();
-            param.AddRange( args );
+            param.AddRange(args);
 
-            return ( await Run( cmd, string.Join( " ", param ) ) );
+            return (await Run(cmd, string.Join(" ", param)));
         }
 
-        internal async Task<int> Run( string cmd, string args, string working = "" )
+        internal async Task<int> Run(string cmd, string args, string working = "")
         {
             int exitCode = -1000;
-            if ( !File.Exists( cmd ) ) return ( exitCode );
+            if (!File.Exists(cmd)) return (exitCode);
 
             Process p = new Process();
 
@@ -496,7 +497,7 @@ namespace FFMpegConvertGUI
             p.StartInfo.RedirectStandardOutput = false;
             p.StartInfo.RedirectStandardInput = false;
             p.StartInfo.RedirectStandardError = false;
-            if ( !string.IsNullOrEmpty( working ) )
+            if (!string.IsNullOrEmpty(working))
                 p.StartInfo.WorkingDirectory = working;
             p.StartInfo.ErrorDialog = true;
             p.StartInfo.ErrorDialogParentHandle = this.Handle;
@@ -508,40 +509,40 @@ namespace FFMpegConvertGUI
 
             //p.BeginOutputReadLine();
             //p.BeginErrorReadLine();
-            p.WaitForExit( 5000 );
+            p.WaitForExit(5000);
 
             //bool exited = p.HasExited;
 
-            if ( p.HasExited ) exitCode = p.ExitCode;
+            if (p.HasExited) exitCode = p.ExitCode;
             //p.CancelOutputRead();
             //p.CancelErrorRead();
             p.Close();
 
-            return ( exitCode );
+            return (exitCode);
         }
 
-        internal async Task<int> PerformConvert( string[] files )
+        internal async Task<int> PerformConvert(string[] files)
         {
             int exit = -1;
-            foreach ( Control dst in grpDst.Controls )
+            foreach (Control dst in grpDst.Controls)
             {
-                if ( ( dst as RadioButton ).Checked )
+                if (dst is RadioButton && (dst as RadioButton).Checked)
                 {
-                    foreach ( string fsrc in files )
+                    foreach (string fsrc in files)
                     {
-                        if ( File.Exists( fsrc ) )
+                        if (File.Exists(fsrc))
                         {
                             string working = Path.GetDirectoryName(fsrc);
                             string args = SetParams( dst.Text, fsrc );
-                            if ( string.IsNullOrEmpty( args ) ) continue;
-                            exit = await Run( Path.Combine( AppPath, "ffmpeg.exe" ), args, working );
+                            if (string.IsNullOrEmpty(args)) continue;
+                            exit = await Run(Path.Combine(AppPath, "ffmpeg.exe"), args, working);
                         }
                     }
                     //if ( exit == 0 ) MessageBox.Show( "OK!" );
                     break;
                 }
             }
-            return ( exit );
+            return (exit);
         }
 
         internal async Task ConvertAll(string[] files)
@@ -561,7 +562,7 @@ namespace FFMpegConvertGUI
                             if (string.IsNullOrEmpty(args)) continue;
                             var exit = await Run(Path.Combine(AppPath, "ffmpeg.exe"), args, working);
                             count++;
-                            progressBar.Value = Convert.ToInt32( count / total);
+                            progressBar.Value = Convert.ToInt32(count / total);
                         }
                     }
                     progressBar.Value = 100;
@@ -571,7 +572,7 @@ namespace FFMpegConvertGUI
             }
         }
 
-        internal string SetParams( string Dst, string ifile )
+        internal string SetParams(string Dst, string ifile)
         {
             string result = string.Empty;
 
@@ -582,38 +583,42 @@ namespace FFMpegConvertGUI
             string fo = $"{Path.GetFileNameWithoutExtension(ifile.Trim(new char[] { '\"' } ))}.{dst.ToLower()}";
 
             List<string> commonargs = new List<string>();
-            commonargs.Add( $"-hide_banner" );
-            commonargs.Add( $"-y" );
-            commonargs.Add( $"-copyts" );
-            commonargs.Add( $"-i \"{fi}\"" );
+            commonargs.Add($"-hide_banner");
+            commonargs.Add($"-y");
+            commonargs.Add($"-copyts");
+            commonargs.Add($"-i \"{fi}\"");
 
-            if ( !chkForce.Checked && same.Contains( src ) && same.Contains( dst ) )
+            if (!chkForce.Checked && same.Contains(src) && same.Contains(dst))
             {
-                commonargs.Add( $"-acodec copy -vcodec copy" );
+                commonargs.Add($"-acodec copy -vcodec copy");
             }
-            else if ( image.Contains( src ) && image2video.Contains( dst ) )
+            else if (image.Contains(src) && image2video.Contains(dst))
             {
-                commonargs.Add( TargetParams["h264"] );
-                commonargs.Add( TargetParams["gif"] );
+                commonargs.Add(TargetParams["h264"]);
+                commonargs.Add(TargetParams["gif"]);
             }
-            else if ( image.Contains( src ) && video.Contains( dst ) )
+            else if (image.Contains(src) && video.Contains(dst))
             {
-                commonargs.Add( TargetParams[dst] );
-                commonargs.Add( TargetParams["gif"] );
+                commonargs.Add(TargetParams[dst]);
+                commonargs.Add(TargetParams["gif"]);
             }
-            else if ( image.Contains( src ) && image2audio.Contains( dst ) )
+            else if (image.Contains(src) && image2audio.Contains(dst))
             {
-                commonargs.Add( TargetParams[dst] );
-                commonargs.Add( TargetParams["gif"] );
+                commonargs.Add(TargetParams[dst]);
+                commonargs.Add(TargetParams["gif"]);
             }
-            else if ( image.Contains( src ) && !image2audio.Contains( dst ) )
+            else if (image.Contains(src) && image.Contains(dst))
             {
-                alert( $"Can't convert from [{src}] to [{dst}]." );
-                return ( string.Empty );
+                commonargs.Add(TargetParams[dst]);
             }
-            else if ( TargetParams.ContainsKey( dst ) )
+            else if (image.Contains(src) && !image2audio.Contains(dst))
             {
-                commonargs.Add( TargetParams[dst] );
+                alert($"Can't convert from [{src}] to [{dst}].");
+                return (string.Empty);
+            }
+            else if (TargetParams.ContainsKey(dst))
+            {
+                commonargs.Add(TargetParams[dst]);
             }
             else
             {
@@ -624,29 +629,30 @@ namespace FFMpegConvertGUI
             //    //commonargs.Add( $"-r 1 -s 1280,720 -aspect 16:9" );
             //    commonargs.Add( $"-vn" );
             //}
-            if ( audio.Contains( src ) || audio.Contains( dst ) && !video.Contains( dst ) )
+            if (audio.Contains(src) || audio.Contains(dst) && !video.Contains(dst))
             {
-                commonargs.Add( $"-vn" );
+                commonargs.Add($"-vn");
             }
-            else if ( image.Contains( src ) && video.Contains( dst ) )
+            else if (image.Contains(src) && video.Contains(dst))
             {
-                commonargs.Add( $"-an" );
+                commonargs.Add($"-an");
             }
 
 
-            commonargs.Add( $"\"{fo}\"" );
-            result = string.Join( " ", commonargs );
+            commonargs.Add($"\"{fo}\"");
+            result = string.Join(" ", commonargs);
 
-            return ( result );
+            return (result);
         }
 
         internal void loadSetting()
         {
-            foreach ( string k in TargetParams.Keys.ToArray() )
+            foreach (string k in TargetParams.Keys.ToArray())
             {
                 try
                 {
-                    TargetParams[k] = appSection.Settings[k].Value;
+                    if (appSection.Settings.AllKeys.Contains(k))
+                        TargetParams[k] = appSection.Settings[k].Value;
                 }
                 catch
                 {
@@ -657,15 +663,18 @@ namespace FFMpegConvertGUI
 
         internal void saveSetting()
         {
-            foreach ( string k in TargetParams.Keys )
+            foreach (string k in TargetParams.Keys)
             {
                 try
                 {
-                    appSection.Settings[k].Value = TargetParams[k];
+                    if (appSection.Settings.AllKeys.Contains(k))
+                        appSection.Settings[k].Value = TargetParams[k];
+                    else
+                        appSection.Settings.Add(k, TargetParams[k]);
                 }
                 catch
                 {
-                    appSection.Settings.Add( k, TargetParams[k] );
+                    appSection.Settings.Add(k, TargetParams[k]);
                 }
             }
             config.Save();
@@ -676,13 +685,13 @@ namespace FFMpegConvertGUI
             InitializeComponent();
         }
 
-        private void MainForm_Load( object sender, EventArgs e )
+        private void MainForm_Load(object sender, EventArgs e)
         {
-            Icon = Icon.ExtractAssociatedIcon( Application.ExecutablePath );
+            Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
 
-            supported.AddRange( video );
-            supported.AddRange( audio );
-            supported.AddRange( image );
+            supported.AddRange(video);
+            supported.AddRange(audio);
+            supported.AddRange(image);
 
             btnConvert.Image = Icon.ToBitmap();
 
@@ -693,24 +702,24 @@ namespace FFMpegConvertGUI
             loadSetting();
         }
 
-        private async void MainForm_Shown( object sender, EventArgs e )
+        private async void MainForm_Shown(object sender, EventArgs e)
         {
             Refresh();
 
             string[] args = ParseCommandLine(Environment.CommandLine);
-            if ( args.Length > 0 )
+            if (args.Length > 0)
             {
                 int exit = await PerformConvert( args );
             }
         }
 
-        private void MainForm_DragOver( object sender, DragEventArgs e )
+        private void MainForm_DragOver(object sender, DragEventArgs e)
         {
             e.Effect = DragDropEffects.None;
-            if ( e.Data.GetDataPresent( DataFormats.FileDrop ) )
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 string[] dragFiles = (string [])e.Data.GetData(DataFormats.FileDrop, true);
-                if ( dragFiles.Length > 0 )
+                if (dragFiles.Length > 0)
                 {
                     e.Effect = DragDropEffects.Copy;
                 }
@@ -718,17 +727,17 @@ namespace FFMpegConvertGUI
             return;
         }
 
-        private async void MainForm_DragDrop( object sender, DragEventArgs e )
+        private async void MainForm_DragDrop(object sender, DragEventArgs e)
         {
             // Determine whether string data exists in the drop data. If not, then 
             // the drop effect reflects that the drop cannot occur. 
-            if ( e.Data.GetDataPresent( DataFormats.FileDrop ) )
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 //e.Effect = DragDropEffects.Copy;
                 try
                 {
                     string[] dragFiles = (string [])e.Data.GetData(DataFormats.FileDrop, true);
-                    if ( dragFiles.Length > 0 )
+                    if (dragFiles.Length > 0)
                     {
                         //int exit = await PerformConvert( dragFiles );
                         //PerformConvert(dragFiles);
@@ -743,23 +752,23 @@ namespace FFMpegConvertGUI
             return;
         }
 
-        private async void btnConvert_Click( object sender, EventArgs e )
+        private async void btnConvert_Click(object sender, EventArgs e)
         {
             btnConvert.Enabled = false;
             List<string> fl = new List<string>();
-            fl.Add( $"All Supported" );
-            fl.Add( $"*.{string.Join( ";*.", supported )}" );
-            fl.Add( $"All File(s)|*.*" );
-            foreach ( string ft in supported )
+            fl.Add($"All Supported");
+            fl.Add($"*.{string.Join(";*.", supported)}");
+            fl.Add($"All File(s)|*.*");
+            foreach (string ft in supported)
             {
                 string ftdisplay = ft.ToLower();
-                if ( formats.ContainsKey( ftdisplay ) )
+                if (formats.ContainsKey(ftdisplay))
                     ftdisplay = formats[ftdisplay];
                 else
                     ftdisplay = ftdisplay.ToUpper();
-                fl.Add( $"{ftdisplay}|*.{ft}" );
+                fl.Add($"{ftdisplay}|*.{ft}");
             }
-            dlgOpen.Filter = string.Join( "|", fl );
+            dlgOpen.Filter = string.Join("|", fl);
 
             //dlgOpen.Filter = $@"All supported File(s)|*.{string.Join(";*.", supported)}|All File(s)|*.*";
             //dlgOpen.FileName = string.Join( ";", supported );
@@ -772,24 +781,24 @@ namespace FFMpegConvertGUI
             btnConvert.Enabled = true;
         }
 
-        private void linkFFmpeg_LinkClicked( object sender, LinkLabelLinkClickedEventArgs e )
+        private void linkFFmpeg_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start( "https://ffmpeg.org" );
+            Process.Start("https://ffmpeg.org");
         }
 
-        private void tsmiSetParams_Click( object sender, EventArgs e )
+        private void tsmiSetParams_Click(object sender, EventArgs e)
         {
-            using ( FFmpegConvertGUI.ParamsForm fm = new FFmpegConvertGUI.ParamsForm() )
+            using (ParamsForm fm = new ParamsForm())
             {
                 fm.Icon = Icon;
-                foreach ( Control dst in grpDst.Controls )
+                foreach (Control dst in grpDst.Controls)
                 {
-                    if ( ( dst as RadioButton ).Checked )
+                    if (dst is RadioButton && (dst as RadioButton).Checked)
                     {
                         fm.Text = $"Target {dst.Text} {fm.Text}";
                         var k = dst.Text.ToLower();
-                        fm.SetParams( TargetParams[k] );
-                        if ( fm.ShowDialog() == DialogResult.OK )
+                        fm.SetParams(TargetParams[k]);
+                        if (fm.ShowDialog() == DialogResult.OK)
                         {
                             TargetParams[k] = fm.GetParams();
                         }
@@ -799,12 +808,12 @@ namespace FFMpegConvertGUI
             }
         }
 
-        private void tsmiSaveParams_Click( object sender, EventArgs e )
+        private void tsmiSaveParams_Click(object sender, EventArgs e)
         {
             saveSetting();
         }
 
-        private void tsmiExit_Click( object sender, EventArgs e )
+        private void tsmiExit_Click(object sender, EventArgs e)
         {
             Close();
         }

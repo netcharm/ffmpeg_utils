@@ -1,4 +1,4 @@
-﻿namespace FFmpegConvertGUI
+﻿namespace FFMpegConvertGUI
 {
     partial class ParamsForm
     {
