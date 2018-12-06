@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.grpDst = new System.Windows.Forms.GroupBox();
+            this.btnDstH265 = new System.Windows.Forms.RadioButton();
             this.btnDstWAV = new System.Windows.Forms.RadioButton();
             this.btnDstWebP = new System.Windows.Forms.RadioButton();
             this.btnDstH264 = new System.Windows.Forms.RadioButton();
@@ -53,10 +54,12 @@
             this.grpPowered = new System.Windows.Forms.GroupBox();
             this.linkFFmpeg = new System.Windows.Forms.LinkLabel();
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.tsmiExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSetParams = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiSaveParams = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiSep0 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsmiSetParams = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.chkForce = new System.Windows.Forms.CheckBox();
             this.grpDst.SuspendLayout();
             this.grpPowered.SuspendLayout();
             this.contextMenu.SuspendLayout();
@@ -64,6 +67,7 @@
             // 
             // grpDst
             // 
+            this.grpDst.Controls.Add(this.btnDstH265);
             this.grpDst.Controls.Add(this.btnDstWAV);
             this.grpDst.Controls.Add(this.btnDstWebP);
             this.grpDst.Controls.Add(this.btnDstH264);
@@ -85,10 +89,21 @@
             this.grpDst.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.grpDst.Location = new System.Drawing.Point(113, 13);
             this.grpDst.Name = "grpDst";
-            this.grpDst.Size = new System.Drawing.Size(209, 160);
+            this.grpDst.Size = new System.Drawing.Size(209, 187);
             this.grpDst.TabIndex = 1;
             this.grpDst.TabStop = false;
             this.grpDst.Text = "Target";
+            // 
+            // btnDstH265
+            // 
+            this.btnDstH265.AutoSize = true;
+            this.btnDstH265.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDstH265.Location = new System.Drawing.Point(152, 152);
+            this.btnDstH265.Name = "btnDstH265";
+            this.btnDstH265.Size = new System.Drawing.Size(46, 16);
+            this.btnDstH265.TabIndex = 21;
+            this.btnDstH265.Text = "H265";
+            this.btnDstH265.UseVisualStyleBackColor = true;
             // 
             // btnDstWAV
             // 
@@ -292,7 +307,7 @@
             // 
             this.btnConvert.Location = new System.Drawing.Point(12, 15);
             this.btnConvert.Name = "btnConvert";
-            this.btnConvert.Size = new System.Drawing.Size(83, 80);
+            this.btnConvert.Size = new System.Drawing.Size(95, 80);
             this.btnConvert.TabIndex = 2;
             this.btnConvert.Text = "Convert";
             this.btnConvert.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -309,17 +324,19 @@
             this.grpPowered.Controls.Add(this.linkFFmpeg);
             this.grpPowered.Location = new System.Drawing.Point(12, 102);
             this.grpPowered.Name = "grpPowered";
-            this.grpPowered.Size = new System.Drawing.Size(83, 69);
+            this.grpPowered.Size = new System.Drawing.Size(95, 68);
             this.grpPowered.TabIndex = 3;
             this.grpPowered.TabStop = false;
             this.grpPowered.Text = "Powered By";
             // 
             // linkFFmpeg
             // 
+            this.linkFFmpeg.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.linkFFmpeg.AutoEllipsis = true;
             this.linkFFmpeg.Location = new System.Drawing.Point(7, 18);
             this.linkFFmpeg.Name = "linkFFmpeg";
-            this.linkFFmpeg.Size = new System.Drawing.Size(70, 35);
+            this.linkFFmpeg.Size = new System.Drawing.Size(82, 35);
             this.linkFFmpeg.TabIndex = 0;
             this.linkFFmpeg.TabStop = true;
             this.linkFFmpeg.Text = "ffmpeg.org";
@@ -333,33 +350,51 @@
             this.tsmiSep0,
             this.tsmiExit});
             this.contextMenu.Name = "contextMenu";
-            this.contextMenu.Size = new System.Drawing.Size(185, 98);
+            this.contextMenu.Size = new System.Drawing.Size(200, 76);
             // 
-            // tsmiExit
+            // tsmiSetParams
             // 
-            this.tsmiExit.Name = "tsmiExit";
-            this.tsmiExit.Size = new System.Drawing.Size(184, 22);
-            this.tsmiExit.Text = "Exit";
-            this.tsmiExit.Click += new System.EventHandler(this.tsmiExit_Click);
+            this.tsmiSetParams.Name = "tsmiSetParams";
+            this.tsmiSetParams.Size = new System.Drawing.Size(199, 22);
+            this.tsmiSetParams.Text = "Set Convert Params";
+            this.tsmiSetParams.Click += new System.EventHandler(this.tsmiSetParams_Click);
             // 
             // tsmiSaveParams
             // 
             this.tsmiSaveParams.Name = "tsmiSaveParams";
-            this.tsmiSaveParams.Size = new System.Drawing.Size(184, 22);
+            this.tsmiSaveParams.Size = new System.Drawing.Size(199, 22);
             this.tsmiSaveParams.Text = "Save Convert Params";
             this.tsmiSaveParams.Click += new System.EventHandler(this.tsmiSaveParams_Click);
             // 
             // tsmiSep0
             // 
             this.tsmiSep0.Name = "tsmiSep0";
-            this.tsmiSep0.Size = new System.Drawing.Size(181, 6);
+            this.tsmiSep0.Size = new System.Drawing.Size(196, 6);
             // 
-            // tsmiSetParams
+            // tsmiExit
             // 
-            this.tsmiSetParams.Name = "tsmiSetParams";
-            this.tsmiSetParams.Size = new System.Drawing.Size(184, 22);
-            this.tsmiSetParams.Text = "Set Convert Params";
-            this.tsmiSetParams.Click += new System.EventHandler(this.tsmiSetParams_Click);
+            this.tsmiExit.Name = "tsmiExit";
+            this.tsmiExit.Size = new System.Drawing.Size(199, 22);
+            this.tsmiExit.Text = "Exit";
+            this.tsmiExit.Click += new System.EventHandler(this.tsmiExit_Click);
+            // 
+            // progressBar
+            // 
+            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar.Location = new System.Drawing.Point(12, 206);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(310, 11);
+            this.progressBar.TabIndex = 4;
+            // 
+            // chkForce
+            // 
+            this.chkForce.Location = new System.Drawing.Point(12, 176);
+            this.chkForce.Name = "chkForce";
+            this.chkForce.Size = new System.Drawing.Size(95, 24);
+            this.chkForce.TabIndex = 23;
+            this.chkForce.Text = "Force";
+            this.chkForce.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -367,8 +402,10 @@
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(334, 183);
+            this.ClientSize = new System.Drawing.Size(334, 226);
             this.ContextMenuStrip = this.contextMenu;
+            this.Controls.Add(this.chkForce);
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.grpPowered);
             this.Controls.Add(this.btnConvert);
             this.Controls.Add(this.grpDst);
@@ -419,6 +456,9 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiSaveParams;
         private System.Windows.Forms.ToolStripSeparator tsmiSep0;
         private System.Windows.Forms.ToolStripMenuItem tsmiExit;
+        private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.RadioButton btnDstH265;
+        private System.Windows.Forms.CheckBox chkForce;
     }
 }
 

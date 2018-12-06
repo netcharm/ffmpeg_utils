@@ -403,8 +403,10 @@ namespace FFMpegConvertGUI
             { "wma", "" },
             // video
             { "flv" , "" },
-            { "h264", "-vcodec libx264 -vbsf h264_mp4toannexb -an" },
-            { "mp4" , "-vcodec libx264 -acodec aac -b:a 320k -q:a 1" },
+            { "h264", "-vcodec h264_nvenc -preset slow -vbsf h264_mp4toannexb -an" },
+            { "mp4" , "-vcodec h264_nvenc -preset slow -level 4.1 -qmin 10 -qmax 52 -acodec aac -b:a 320k -q:a 1 " },
+            { "h265" , "-vcodec hevc_nvenc -preset slow -level 4.1 -qmin 10 -qmax 52 -acodec aac -b:a 320k -q:a 1 " },
+            { "hevc" , "-vcodec hevc_nvenc -preset slow -level 4.1 -qmin 10 -qmax 52 -acodec aac -b:a 320k -q:a 1 " },
             { "mkv" , "-acodec copy -vcodec copy" },
             { "webm", "-c:v libvpx-vp9 -crf 12 -b:v 100K" },
             { "wmv" , "" },
@@ -542,6 +544,33 @@ namespace FFMpegConvertGUI
             return ( exit );
         }
 
+        internal async Task ConvertAll(string[] files)
+        {
+            foreach (Control dst in grpDst.Controls)
+            {
+                if (dst is RadioButton && (dst as RadioButton).Checked)
+                {
+                    var total = files.Length;
+                    var count = 0;
+                    foreach (string fsrc in files)
+                    {
+                        if (File.Exists(fsrc))
+                        {
+                            string working = Path.GetDirectoryName(fsrc);
+                            string args = SetParams( dst.Text, fsrc );
+                            if (string.IsNullOrEmpty(args)) continue;
+                            var exit = await Run(Path.Combine(AppPath, "ffmpeg.exe"), args, working);
+                            count++;
+                            progressBar.Value = Convert.ToInt32( count / total);
+                        }
+                    }
+                    progressBar.Value = 100;
+                    //if ( exit == 0 ) MessageBox.Show( "OK!" );
+                    break;
+                }
+            }
+        }
+
         internal string SetParams( string Dst, string ifile )
         {
             string result = string.Empty;
@@ -558,7 +587,7 @@ namespace FFMpegConvertGUI
             commonargs.Add( $"-copyts" );
             commonargs.Add( $"-i \"{fi}\"" );
 
-            if ( same.Contains( src ) && same.Contains( dst ) )
+            if ( !chkForce.Checked && same.Contains( src ) && same.Contains( dst ) )
             {
                 commonargs.Add( $"-acodec copy -vcodec copy" );
             }
@@ -701,7 +730,9 @@ namespace FFMpegConvertGUI
                     string[] dragFiles = (string [])e.Data.GetData(DataFormats.FileDrop, true);
                     if ( dragFiles.Length > 0 )
                     {
-                        int exit = await PerformConvert( dragFiles );
+                        //int exit = await PerformConvert( dragFiles );
+                        //PerformConvert(dragFiles);
+                        await ConvertAll(dragFiles);
                     }
                 }
                 catch
@@ -733,9 +764,10 @@ namespace FFMpegConvertGUI
             //dlgOpen.Filter = $@"All supported File(s)|*.{string.Join(";*.", supported)}|All File(s)|*.*";
             //dlgOpen.FileName = string.Join( ";", supported );
             dlgOpen.FileName = string.Empty;
-            if ( dlgOpen.ShowDialog() == DialogResult.OK )
+            if (dlgOpen.ShowDialog() == DialogResult.OK)
             {
-                int exit = await PerformConvert( dlgOpen.FileNames );
+                //int exit = await PerformConvert( dlgOpen.FileNames );
+                await ConvertAll(dlgOpen.FileNames);
             }
             btnConvert.Enabled = true;
         }
