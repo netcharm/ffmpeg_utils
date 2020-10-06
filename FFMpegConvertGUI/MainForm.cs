@@ -20,10 +20,12 @@ namespace FFMpegConvertGUI
         private static Configuration config = ConfigurationManager.OpenExeConfiguration( Application.ExecutablePath );
         private AppSettingsSection appSection = config.AppSettings;
 
-        string[] same = { "flv", "mkv", "mp4" };
+        string[] same = { "flv", "f4v", "mkv", "mp4" };
         string[] image2audio = { "ogg", "wma" };
         string[] image2video = { "mkv" };
         string[] video2image = { "webp", "gif" };
+
+        internal int EncodingQuality = 6;
 
         private List<string> supported = new List<string>();
         #region FFmpeg formats
@@ -382,7 +384,7 @@ namespace FFMpegConvertGUI
         };
 
         private string[] video = new string[] {
-            "flv", "mkv", "mp4", "wmv", "webm", "h264", "avi", "divx", "xvid", "mjpeg", "m4v", "ogv", "ogg", "hevc", "h265"
+            "flv", "f4v", "mkv", "mp4", "wmv", "webm", "h264", "avi", "divx", "xvid", "mjpeg", "m4v", "ogv", "ogg", "hevc", "h265"
         };
 
         private string[] image = new string[] {
@@ -417,6 +419,7 @@ namespace FFMpegConvertGUI
             { "png" , "" },
             { "tif" , "" },
             { "webp", "-c libwebp" },
+            { "heif", "-q 0.9 -preset slower -pix_fmt gbrp -f heif" },
             { "heic", "-q 0.9 -preset slower -pix_fmt gbrp -f hevc" },
             // unknown
             {"unk", "" }
@@ -689,6 +692,8 @@ namespace FFMpegConvertGUI
         {
             Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
 
+            trkQ.Value = EncodingQuality;
+
             supported.AddRange(video);
             supported.AddRange(audio);
             supported.AddRange(image);
@@ -816,6 +821,11 @@ namespace FFMpegConvertGUI
         private void tsmiExit_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void trkQ_ValueChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

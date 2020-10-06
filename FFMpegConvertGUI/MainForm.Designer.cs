@@ -62,9 +62,11 @@
             this.tsmiExit = new System.Windows.Forms.ToolStripMenuItem();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.chkForce = new System.Windows.Forms.CheckBox();
+            this.trkQ = new System.Windows.Forms.TrackBar();
             this.grpDst.SuspendLayout();
             this.grpPowered.SuspendLayout();
             this.contextMenu.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trkQ)).BeginInit();
             this.SuspendLayout();
             // 
             // grpDst
@@ -350,7 +352,7 @@
             this.grpPowered.Controls.Add(this.linkFFmpeg);
             this.grpPowered.Location = new System.Drawing.Point(12, 102);
             this.grpPowered.Name = "grpPowered";
-            this.grpPowered.Size = new System.Drawing.Size(95, 57);
+            this.grpPowered.Size = new System.Drawing.Size(95, 35);
             this.grpPowered.TabIndex = 3;
             this.grpPowered.TabStop = false;
             this.grpPowered.Text = "Powered By";
@@ -422,6 +424,16 @@
             this.chkForce.Text = "Force Re-Encode";
             this.chkForce.UseVisualStyleBackColor = true;
             // 
+            // trkQ
+            // 
+            this.trkQ.Location = new System.Drawing.Point(13, 144);
+            this.trkQ.Name = "trkQ";
+            this.trkQ.Size = new System.Drawing.Size(94, 45);
+            this.trkQ.TabIndex = 24;
+            this.trkQ.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trkQ.Value = 6;
+            this.trkQ.ValueChanged += new System.EventHandler(this.trkQ_ValueChanged);
+            // 
             // MainForm
             // 
             this.AcceptButton = this.btnConvert;
@@ -435,6 +447,7 @@
             this.Controls.Add(this.grpPowered);
             this.Controls.Add(this.btnConvert);
             this.Controls.Add(this.grpDst);
+            this.Controls.Add(this.trkQ);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
@@ -449,7 +462,9 @@
             this.grpDst.PerformLayout();
             this.grpPowered.ResumeLayout(false);
             this.contextMenu.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.trkQ)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -487,6 +502,7 @@
         private System.Windows.Forms.CheckBox chkForce;
         private System.Windows.Forms.RadioButton btnDstHEIC;
         private System.Windows.Forms.RadioButton btnDstHEVC;
+        private System.Windows.Forms.TrackBar trkQ;
     }
 }
 
